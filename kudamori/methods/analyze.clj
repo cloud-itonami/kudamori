@@ -196,7 +196,7 @@
                 "  effluent→mizuho (L): " (format "%.1f" (get-in res [:jetting :water :effluent-l])) "\n")))))
 
 (defn -main [& args]
-  (let [path (or (first args) "20-actors/kudamori/data/network.edn")
+  (let [path (or (first args) "data/network.edn")
         seed (load-seed path)
         res  (run-day seed)]
     (print (report-str res))

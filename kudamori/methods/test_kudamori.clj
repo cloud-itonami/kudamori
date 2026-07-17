@@ -1,5 +1,5 @@
 ;; kudamori 管守 — test suite (clojure.test, babashka-runnable).
-;; Run: bb --classpath 20-actors 20-actors/kudamori/methods/test_kudamori.clj
+;; Run: bb run_tests.clj
 ;; Per ADR-2606142030 (kudamori R0).
 (ns kudamori.methods.test-kudamori
   (:require [clojure.test :refer [deftest is testing run-tests]]
@@ -116,7 +116,7 @@
       (is (< (Math/abs (- (:effluent-l wb) 540.0)) 1e-6)))))   ; 30% of 1800
 
 ;; ── analyze + datom_emit (end-to-end over the seed) ──────────────────────────
-(def seed (az/load-seed "20-actors/kudamori/data/network.edn"))
+(def seed (az/load-seed "data/network.edn"))
 
 (deftest analyze-end-to-end
   (let [res (az/run seed)]
@@ -399,7 +399,7 @@
 ;; via az/load-seed (not a raw edn/read-string+slurp) so this tolerates the
 ;; datomic/datascript tx-data shape the same way `seed` above does (Phase 4 edn-datomize).
 (def day-seed
-  (az/load-seed "20-actors/kudamori/data/network.edn"))
+  (az/load-seed "data/network.edn"))
 
 (deftest run-day-exercises-all-domain-methods
   (testing "run-day threads the day through ALL 8 domain methods end-to-end"

@@ -47,7 +47,7 @@ methods are pure Clojure (no deps) → run under both `bb` and the kotoba pywasm
 ## Layout
 
 ```
-20-actors/kudamori/
+com-etzhayyim-kudamori/
 ├── CLAUDE.md                       # this file
 ├── manifest.edn                    # actor manifest (5 cells, 8 gates, Clojure methods)
 ├── data/
@@ -67,9 +67,9 @@ methods are pure Clojure (no deps) → run under both `bb` and the kotoba pywasm
 
 ```bash
 # from repo root (classpath = 20-actors, ns = kudamori.methods.*)
-bb --classpath 20-actors 20-actors/kudamori/methods/test_kudamori.clj   # 17 green
-bb --classpath 20-actors -m kudamori.methods.analyze                    # → report
-bb --classpath 20-actors -m kudamori.methods.datom-emit                 # → EAVT Datom log
+bb run_tests.clj                                                        # full suite
+bb --classpath . -m kudamori.methods.analyze                            # → report
+bb --classpath . -m kudamori.methods.datom-emit                         # → EAVT Datom log
 ```
 
 ## The two starred safety gates (verified in code + tests)

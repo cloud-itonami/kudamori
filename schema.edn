@@ -1,8 +1,8 @@
-;; 20-actors/kudamori/schema.edn -- Datomic/Datascript-compatible schema for this
+;; schema.edn -- Datomic/Datascript-compatible schema for this
 ;; actor's transformed .edn files (ad-hoc port of manifest/edn-datomize.cljs, run
 ;; under bb/JVM Clojure for double-vs-long type fidelity; no repo-root manifest/
 ;; dir convention in this worktree, so schema is accumulated per-actor). Phase 4
-;; fan-out (edn-datomize, 20-actors/kudamori).
+;; fan-out (actor-local EDN datomization).
 ;; :db/ident attribute defs; no Datomic-specific keys (:db.install/_attribute etc).
 ;; Hand-edit discouraged -- regenerate via the transform tooling.
 
