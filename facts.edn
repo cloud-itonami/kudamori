@@ -1,0 +1,212 @@
+;; kudamori 管守 — sourced facts behind the ★ G5 confined-space atmosphere gate.
+;;
+;; WHY THIS FILE EXISTS
+;; -------------------
+;; `kudamori/methods/atmosphere.clj` carried its four refusal thresholds as bare
+;; constants under the comment "industrial confined-space norm". A norm is not a
+;; citation: a reader could not tell which regime the numbers came from, whether
+;; they were current, or whether an edit had quietly loosened one. This file names
+;; the instrument, quotes it verbatim, and records the URL the quote was read from
+;; and the date it was actually fetched.
+;;
+;; WHAT IS AND IS NOT GROUNDED
+;; ---------------------------
+;; The atmosphere thresholds ARE grounded (4 facts, 2 jurisdictions, 3 fetchable
+;; sources, each verified to contain its quote — not merely to return 200).
+;; The hydro-jetting pipe-material pressure ratings in `jetting.clj` are NOT — see
+;; :kudamori.facts/gaps at the bottom. They are recorded there as ungrounded rather
+;; than dressed in a weak citation, because an unsourced number that LOOKS sourced
+;; is worse than one that admits it isn't.
+;;
+;; THE CODE IS STRICTER THAN EVERY AUTHORITY CITED HERE, BY CONSTRUCTION
+;; --------------------------------------------------------------------
+;; `atmosphere.clj` refuses at `>=` the limit where an authority says "in excess of"
+;; or "below", so it refuses at exactly the limit that the authority still permits.
+;; That direction is deliberate and is fixed by test — see
+;; `code-thresholds-at-least-as-strict-as-every-cited-authority` in
+;; kudamori/methods/test_kudamori.clj. If someone loosens a constant past a cited
+;; limit, that test fails and names the instrument the change would breach.
+;;
+;; JURISDICTIONAL NOTE (this actor operates in JP; the O2 floor it uses is US)
+;; --------------------------------------------------------------------------
+;; 酸素欠乏症等防止規則 defines oxygen deficiency at **18 %**; OSHA defines it at
+;; **19.5 %**. The code uses 19.5 %, so it is compliant with both and conservative
+;; with respect to the ordinance that actually binds a Japanese sewer crew. That
+;; divergence is a fact about the code, not an error in it, and is stated here so
+;; nobody "corrects" 19.5 down to 18 believing they are aligning with 酸欠則.
+;;
+;; A sewer is squarely inside the Japanese regime: 労働安全衛生法施行令 別表第六
+;; 第九号 lists the interior of pipes/culverts/manholes that have held sewage, and
+;; 酸欠則 第二条第八号 makes work there 第二種酸素欠乏危険作業 — which under 第五条
+;; must be ventilated to O2 ≥ 18 % **and** H2S ≤ 10 ppm. That pairing is the legal
+;; shape of `purge-to-entry`.
+;;
+;; Per ADR-2606142030 (kudamori R0). Data only — no deps, no code, no I/O.
+
+{:kudamori.facts/schema-version 1
+
+ ;; Every fact was fetched and its :fact/quote confirmed present in the response
+ ;; body on :fact/verified-at. A 2xx alone was NOT accepted as verification: the
+ ;; eCFR and e-Gov *web* pages both return 200 with the regulation text absent
+ ;; (they are client-rendered), so the URLs below are the ones that actually carry
+ ;; the words — the OSHA standard page and the e-Gov law **API**.
+ :kudamori.facts/atmosphere
+ [{:fact/id          :o2-deficient-floor-pct
+   :fact/gas         :o2
+   :fact/value       19.5
+   :fact/unit        :percent-by-volume
+   :fact/relation    :code-refuses-below
+   :fact/code-symbol kudamori.methods.atmosphere/o2-min-pct
+   :fact/jurisdiction :us
+   :fact/authority   "US OSHA"
+   :fact/instrument  "29 CFR 1910.146"
+   :fact/clause      "(b) Definitions — Oxygen deficient atmosphere"
+   :fact/quote       "Oxygen deficient atmosphere means an atmosphere containing less than 19.5 percent oxygen by volume."
+   :fact/url         "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.146"
+   :fact/verified-at "2026-08-30"}
+
+  {:fact/id          :o2-enriched-ceiling-pct
+   :fact/gas         :o2
+   :fact/value       23.5
+   :fact/unit        :percent-by-volume
+   :fact/relation    :code-refuses-above
+   :fact/code-symbol kudamori.methods.atmosphere/o2-max-pct
+   :fact/jurisdiction :us
+   :fact/authority   "US OSHA"
+   :fact/instrument  "29 CFR 1910.146"
+   :fact/clause      "(b) Definitions — Oxygen enriched atmosphere"
+   :fact/quote       "Oxygen enriched atmosphere means an atmosphere containing more than 23.5 percent oxygen by volume."
+   :fact/url         "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.146"
+   :fact/verified-at "2026-08-30"}
+
+  {:fact/id          :ch4-lel-ceiling-pct
+   :fact/gas         :ch4
+   :fact/value       10.0
+   :fact/unit        :percent-of-lower-flammable-limit
+   :fact/relation    :code-refuses-at-or-above
+   :fact/code-symbol kudamori.methods.atmosphere/ch4-max-lel
+   :fact/jurisdiction :us
+   :fact/authority   "US OSHA"
+   :fact/instrument  "29 CFR 1910.146"
+   :fact/clause      "(b) Definitions — Hazardous atmosphere (1)"
+   :fact/quote       "Flammable gas, vapor, or mist in excess of 10 percent of its lower flammable limit (LFL)"
+   :fact/url         "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.146"
+   :fact/verified-at "2026-08-30"}
+
+  {:fact/id          :h2s-ceiling-ppm
+   :fact/gas         :h2s
+   :fact/value       10.0
+   :fact/unit        :ppm
+   :fact/relation    :code-refuses-at-or-above
+   :fact/code-symbol kudamori.methods.atmosphere/h2s-max-ppm
+   :fact/jurisdiction :us
+   :fact/authority   "US NIOSH"
+   :fact/instrument  "NIOSH Pocket Guide to Chemical Hazards — Hydrogen sulfide"
+   :fact/clause      "NIOSH REL (ceiling)"
+   :fact/quote       "NIOSH REL C 10 ppm"
+   :fact/note        "Ceiling over a 10-minute sampling period. OSHA's own PEL on the same page is looser (C 20 ppm), so the stricter NIOSH ceiling is the one the code tracks."
+   :fact/url         "https://www.cdc.gov/niosh/npg/npgd0337.html"
+   :fact/verified-at "2026-08-30"}
+
+  {:fact/id          :co-ceiling-ppm
+   :fact/gas         :co
+   :fact/value       35.0
+   :fact/unit        :ppm
+   :fact/relation    :code-refuses-at-or-above
+   :fact/code-symbol kudamori.methods.atmosphere/co-max-ppm
+   :fact/jurisdiction :us
+   :fact/authority   "US NIOSH"
+   :fact/instrument  "NIOSH Pocket Guide to Chemical Hazards — Carbon monoxide"
+   :fact/clause      "NIOSH REL (TWA)"
+   :fact/quote       "NIOSH REL TWA 35 ppm"
+   :fact/note        "OSHA's PEL on the same page is looser (TWA 50 ppm); the code tracks the stricter NIOSH REL."
+   :fact/url         "https://www.cdc.gov/niosh/npg/npgd0105.html"
+   :fact/verified-at "2026-08-30"}
+
+  ;; ── the regime that actually binds this actor ──────────────────────────────
+  {:fact/id          :jp-o2-deficient-floor-pct
+   :fact/gas         :o2
+   :fact/value       18.0
+   :fact/unit        :percent-by-volume
+   :fact/relation    :authority-defines-deficient-below
+   :fact/code-symbol kudamori.methods.atmosphere/o2-min-pct
+   :fact/jurisdiction :jp
+   :fact/authority   "厚生労働省 (MHLW)"
+   :fact/instrument  "酸素欠乏症等防止規則（昭和四十七年労働省令第四十二号）"
+   :fact/clause      "第二条第一号"
+   :fact/quote       "酸素欠乏 空気中の酸素の濃度が十八パーセント未満である状態をいう。"
+   :fact/note        "The code's floor is 19.5 %, i.e. STRICTER than this ordinance. Do not 'align' it down to 18."
+   :fact/url         "https://elaws.e-gov.go.jp/api/1/lawdata/347M50002000042"
+   :fact/verified-at "2026-08-30"}
+
+  {:fact/id          :jp-h2s-ceiling-ppm
+   :fact/gas         :h2s
+   :fact/value       10.0
+   :fact/unit        :ppm
+   :fact/relation    :authority-defines-hazard-above
+   :fact/code-symbol kudamori.methods.atmosphere/h2s-max-ppm
+   :fact/jurisdiction :jp
+   :fact/authority   "厚生労働省 (MHLW)"
+   :fact/instrument  "酸素欠乏症等防止規則（昭和四十七年労働省令第四十二号）"
+   :fact/clause      "第二条第二号"
+   :fact/quote       "空気中の硫化水素の濃度が百万分の十を超える状態"
+   :fact/note        "百万分の十 = 10 ppm. Agrees numerically with the NIOSH ceiling."
+   :fact/url         "https://elaws.e-gov.go.jp/api/1/lawdata/347M50002000042"
+   :fact/verified-at "2026-08-30"}]
+
+ ;; Why `purge-to-entry` exists at all, and why it targets BOTH O2 and H2S.
+ :kudamori.facts/ventilation
+ [{:fact/id          :jp-ventilation-duty
+   :fact/jurisdiction :jp
+   :fact/authority   "厚生労働省 (MHLW)"
+   :fact/instrument  "酸素欠乏症等防止規則（昭和四十七年労働省令第四十二号）"
+   :fact/clause      "第五条（換気）"
+   :fact/quote       "事業者は、酸素欠乏危険作業に労働者を従事させる場合は、当該作業を行う場所の空気中の酸素の濃度を十八パーセント以上（第二種酸素欠乏危険作業に係る場所にあつては、空気中の酸素の濃度を十八パーセント以上、かつ、硫化水素の濃度を百万分の十以下。次項において同じ。）に保つように換気しなければならない。"
+   :fact/note        "Forced ventilation to a threshold is a legal DUTY, not an optimisation. kudamori.methods.atmosphere/purge-to-entry is the model of it, and it reports :entry-permitted? false when the budget runs out rather than proceeding."
+   :fact/url         "https://elaws.e-gov.go.jp/api/1/lawdata/347M50002000042"
+   :fact/verified-at "2026-08-30"}
+
+  {:fact/id          :jp-sewer-is-type-2-hazardous-work
+   :fact/jurisdiction :jp
+   :fact/authority   "厚生労働省 (MHLW)"
+   :fact/instrument  "酸素欠乏症等防止規則（昭和四十七年労働省令第四十二号）"
+   :fact/clause      "第二条第八号"
+   :fact/quote       "第二種酸素欠乏危険作業 酸素欠乏危険場所のうち、令別表第六第三号の三、第九号又は第十二号に掲げる酸素欠乏危険場所"
+   :fact/note        "Item 9 of Appended Table 6 is the sewer case (see :jp-sewer-listed-as-hazardous-place), so kudamori's work site is Type-2 — the class that must satisfy the O2 AND H2S pair, not O2 alone."
+   :fact/url         "https://elaws.e-gov.go.jp/api/1/lawdata/347M50002000042"
+   :fact/verified-at "2026-08-30"}
+
+  {:fact/id          :jp-sewer-listed-as-hazardous-place
+   :fact/jurisdiction :jp
+   :fact/authority   "内閣 (Cabinet Order)"
+   :fact/instrument  "労働安全衛生法施行令（昭和四十七年政令第三百十八号）"
+   :fact/clause      "別表第六 第九号"
+   :fact/quote       "し尿、腐泥、汚水、パルプ液その他腐敗し、又は分解しやすい物質を入れてあり、又は入れたことのあるタンク、船倉、槽、管、暗きよ、マンホール、溝又はピツトの内部"
+   :fact/note        "管 (pipe), 暗きよ (culvert) and マンホール (manhole) — the three place-kinds kudamori's network model is made of (data/network.edn nodes are manholes, segments are pipes). This is the clause that makes ★ G5 a legal gate and not a house rule."
+   :fact/url         "https://elaws.e-gov.go.jp/api/1/lawdata/347CO0000000318"
+   :fact/verified-at "2026-08-30"}]
+
+ ;; Recorded as UNGROUNDED on purpose. `jetting.clj` refuses over-pressure against
+ ;; these numbers, so ★ G7 is a real gate — but the numbers it gates against are R0
+ ;; estimates, and no free primary source was found that states them. Sourcing them
+ ;; means the sewer-pipe product standards (JSWAS R-1 vitrified clay / K-1 PVC /
+ ;; A-1 concrete / G-1 ductile iron) and a jetting code of practice; both are sold,
+ ;; not published, so nothing was cited rather than citing something adjacent.
+ ;;
+ ;; Consequence, stated plainly: G7 currently refuses against unverified limits. It
+ ;; still refuses (the gate is not theatre), but "within rating" here means "within
+ ;; kudamori's R0 estimate", NOT "within a standard".
+ :kudamori.facts/gaps
+ [{:gap/id        :jetting-material-ratings-unsourced
+   :gap/subject   kudamori.methods.jetting/material-rating-bar
+   :gap/values    {:vcp 150.0 :pvc 100.0 :concrete 130.0 :ductile-iron 250.0}
+   :gap/unit      :bar
+   :gap/sourcing  :representative
+   :gap/why-open  "Primary sources (JSWAS pipe product standards; WRc-style sewer jetting code of practice) are paid publications with no fetchable public text. Citing an adjacent free page would misrepresent the provenance."
+   :gap/closes-when "A JSWAS/JIS clause or a published jetting code of practice is obtained and each rating is replaced by a quoted value with an instrument and clause."}
+
+  {:gap/id        :thresholds-are-instantaneous-not-time-weighted
+   :gap/subject   kudamori.methods.atmosphere/hazards
+   :gap/sourcing  :simplification
+   :gap/why-open  "The CO figure cited is a TWA and the H2S figure a 10-minute ceiling, but `hazards` compares a single instantaneous reading against both. For an entry gate this errs safe (any instantaneous breach refuses), so it is a conservative simplification rather than an error — but it is not the same quantity the authority defines."
+   :gap/closes-when "A reading becomes a time series and exposure is integrated over the sampling window the instrument names."}]}

@@ -30,6 +30,31 @@ bb --classpath . -m kudamori.methods.datom-emit                         # → ko
 | `jetting.clj`    | ★ G7 jet-pressure-safe vs pipe-material rating (**raises** on over-pressure) · debris-removal estimate · water-reuse balance (G2, effluent → mizuho) |
 | `analyze.clj`    | end-to-end: entry gate (purge if needed) → in-pipe nav → pressure-safe jetting → report (downstream GATED if the air can't be made safe) |
 | `datom_emit.clj` | kotoba EAVT projection (`:kuda.*` GROUND + `:bond/*` DERIVED transient) |
+| `facts.edn`      | ★ the sources behind G5 — every atmosphere threshold quoted, dated and URL'd (OSHA / NIOSH / 酸欠則), plus the G7 ratings declared **ungrounded** |
+
+## Where the numbers come from
+
+`facts.edn` carries the citation for every ★ G5 threshold: the instrument, the clause,
+the verbatim quote, the URL it was read from and the date it was fetched. Nothing there
+is asserted from memory — each quote was confirmed present in the fetched body, because
+several official sites (eCFR, e-Gov's web UI) answer `200` with the regulation text
+absent, so a status code alone is not verification.
+
+Two jurisdictions are recorded because they disagree: OSHA puts oxygen deficiency at
+**19.5 %**, 酸素欠乏症等防止規則 第二条 at **18 %**. The code holds 19.5 %, so it is
+stricter than the ordinance that actually binds a Japanese sewer crew and satisfies
+both — do not "align" it down. A sewer is a 第二種酸素欠乏危険作業 site (令別表第六
+第九号 covers the interior of 管・暗きよ・マンホール that have held 汚水), which under
+第五条 must be ventilated to O2 ≥ 18 % **and** H2S ≤ 10 ppm; that pairing is what
+`purge-to-entry` models.
+
+`test_kudamori.clj` makes those citations load-bearing rather than decorative: it fails
+if any constant drifts to the permissive side of an authority cited for it, and it
+*errors* — never silently passes — if `facts.edn` is missing or empty.
+
+What is **not** sourced is stated as such: G7's pipe pressure ratings are R0 estimates
+recorded under `:kudamori.facts/gaps`, with the condition that would close the gap. The
+over-pressure gate still refuses; the limits it refuses against are unverified.
 
 ## Gates
 
