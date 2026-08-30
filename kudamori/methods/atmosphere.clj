@@ -6,18 +6,25 @@
 ;; RAISES. A purge-to-entry model (forced ventilation) drives concentrations toward the
 ;; threshold over time, mirroring niyaku/kamado purge-to-entry discipline.
 ;;
-;; Thresholds (industrial confined-space norm):
-;;   O2   safe 19.5 % .. 23.5 %      (below = asphyxiation, above = enriched/fire)
-;;   H2S  < 10 ppm                   (硫化水素)
-;;   CH4  < 10 %LEL                  (methane lower-explosive-limit fraction)
-;;   CO   < 35 ppm                   (一酸化炭素)
+;; Thresholds — SOURCED, not a house norm. Each constant below is quoted, dated and
+;; URL'd in `facts.edn` (:kudamori.facts/atmosphere), and a drift test in
+;; kudamori/methods/test_kudamori.clj fails if one is loosened past its authority:
+;;   O2   safe 19.5 % .. 23.5 %      OSHA 29 CFR 1910.146(b) definitions
+;;   H2S  < 10 ppm   (硫化水素)       NIOSH REL ceiling (10-min); 酸欠則 第二条第二号 agrees
+;;   CH4  < 10 %LEL                  OSHA 29 CFR 1910.146(b) hazardous atmosphere (1)
+;;   CO   < 35 ppm   (一酸化炭素)     NIOSH REL TWA
+;;
+;; The refusals are `>=`, so this gate refuses AT a limit its authority still permits.
+;; Deliberate: see facts.edn. Note the O2 floor is the US 19.5 %, while 酸欠則 defines
+;; deficiency at 18 % — this code is STRICTER than the ordinance binding a JP sewer
+;; crew, and satisfies both. Do not "align" 19.5 down to 18.
 ;;
 ;; Pure Clojure, no deps → babashka-runnable AND kotoba-pywasm-portable. Pure compute;
 ;; it gates no real entry (G1 no-server-key / R0 design+sim).
 ;; Per ADR-2606142030 (kudamori R0). Clojure-first (the GAP-actor wave).
 (ns kudamori.methods.atmosphere)
 
-;; ── safe-atmosphere thresholds ───────────────────────────────────────────────
+;; ── safe-atmosphere thresholds (cited in facts.edn; drift-tested) ────────────
 (def ^:const o2-min-pct 19.5)
 (def ^:const o2-max-pct 23.5)
 (def ^:const h2s-max-ppm 10.0)
@@ -58,6 +65,11 @@
     reading))
 
 ;; ── purge-to-entry (forced ventilation) ──────────────────────────────────────
+;; Ventilating to a threshold is a legal duty here, not an optimisation: a sewer is a
+;; 第二種酸素欠乏危険作業 site (令別表第六第九号 lists the interior of 管/暗きよ/マンホール
+;; that have held 汚水), and 酸欠則 第五条 requires ventilating to O2 >= 18 % AND
+;; H2S <= 10 ppm. Quoted in facts.edn (:kudamori.facts/ventilation).
+;;
 ;; Well-mixed dilution: each air change scales every CONTAMINANT toward 0 by a fixed
 ;; fraction; O2 is restored toward fresh-air 20.9 % from whichever side it sits on.
 (def ^:const fresh-o2-pct 20.9)

@@ -53,6 +53,103 @@
       (is (not (:entry-permitted? r)))
       (is (seq (:hazards r))))))
 
+;; ── sourced thresholds (facts.edn) ───────────────────────────────────────────
+;; The four ★ G5 constants used to be bare numbers under the comment "industrial
+;; confined-space norm". facts.edn now names the instrument and quotes it; these
+;; tests are what stop that file from being decoration. They fail if a constant
+;; drifts LOOSER than any authority cited for it, and they name the instrument the
+;; drift would breach.
+
+(def facts
+  "The citation corpus. RAISES if it cannot be read: a missing corpus must not read
+   as 'no violations found' — an unverifiable check has to be distinguishable from a
+   passing one, so it is a hard error here rather than an empty seq."
+  (let [path "facts.edn"
+        raw  (try (slurp path)
+                  (catch Exception e
+                    (throw (ex-info (str "facts.edn unreadable — cannot verify that the "
+                                         "G5 thresholds still match their cited authorities")
+                                    {:path path} e))))
+        m    (edn/read-string raw)]
+    (when-not (seq (:kudamori.facts/atmosphere m))
+      (throw (ex-info "facts.edn carries no atmosphere facts — nothing to check against"
+                      {:path path})))
+    m))
+
+(def code-thresholds
+  "The live constants, by the symbol facts.edn names them with."
+  {'kudamori.methods.atmosphere/o2-min-pct   atm/o2-min-pct
+   'kudamori.methods.atmosphere/o2-max-pct   atm/o2-max-pct
+   'kudamori.methods.atmosphere/h2s-max-ppm  atm/h2s-max-ppm
+   'kudamori.methods.atmosphere/ch4-max-lel  atm/ch4-max-lel
+   'kudamori.methods.atmosphere/co-max-ppm   atm/co-max-ppm})
+
+(deftest every-cited-fact-is-well-formed
+  (testing "each fact names an instrument, a clause, a verbatim quote and a fetched URL"
+    (let [fs (concat (:kudamori.facts/atmosphere facts)
+                     (:kudamori.facts/ventilation facts))]
+      (is (= 10 (count fs)))                       ; evidence floor: the corpus is not empty
+      (doseq [f fs]
+        (testing (str (:fact/id f))
+          (is (keyword? (:fact/id f)))
+          (is (seq (:fact/authority f)))
+          (is (seq (:fact/instrument f)))
+          (is (seq (:fact/clause f)))
+          (is (seq (:fact/quote f)))
+          (is (re-find #"^https://" (str (:fact/url f))))
+          (is (re-find #"^\d{4}-\d{2}-\d{2}$" (str (:fact/verified-at f)))))))))
+
+(deftest code-thresholds-at-least-as-strict-as-every-cited-authority
+  (testing "★ G5 — no constant may sit on the permissive side of any authority cited for it"
+    (let [checked
+          (for [f (:kudamori.facts/atmosphere facts)
+                :let [sym (:fact/code-symbol f)
+                      code (get code-thresholds sym)
+                      lim  (double (:fact/value f))
+                      why  (str (:fact/id f) " vs " (:fact/instrument f)
+                                " " (:fact/clause f))]]
+            (do
+              (is (some? code) (str "facts.edn names an unknown constant: " sym))
+              (case (:fact/relation f)
+                ;; a floor: the code refuses BELOW it, so stricter = higher
+                (:code-refuses-below :authority-defines-deficient-below)
+                (is (>= code lim) (str "floor loosened below the cited limit — " why))
+                ;; a ceiling: the code refuses AT/ABOVE it, so stricter = lower
+                (:code-refuses-above :code-refuses-at-or-above :authority-defines-hazard-above)
+                (is (<= code lim) (str "ceiling raised above the cited limit — " why)))
+              sym))]
+      ;; floor on the loop itself: a `for` over an empty seq asserts nothing and
+      ;; would pass. Seven facts must actually have been compared.
+      (is (= 7 (count checked))))))
+
+(deftest reading-at-a-cited-hazard-limit-is-refused
+  (testing "★ G5 in behaviour, not just in constants — the gate refuses AT each cited limit"
+    ;; JP 酸欠則 permits O2 down to 18.0; the code refuses there (it holds the 19.5 floor).
+    (is (not (atm/entry-permitted? {:o2-pct 18.0 :h2s-ppm 0 :ch4-lel 0 :co-ppm 0})))
+    ;; each cited gas ceiling, at exactly the cited number
+    (doseq [[gas k] [[:h2s :h2s-ppm] [:ch4 :ch4-lel] [:co :co-ppm]]]
+      (let [lim (->> (:kudamori.facts/atmosphere facts)
+                     (filter #(and (= gas (:fact/gas %))
+                                   (= :code-refuses-at-or-above (:fact/relation %))))
+                     first :fact/value)
+            reading (merge {:o2-pct 20.9 :h2s-ppm 0 :ch4-lel 0 :co-ppm 0} {k lim})]
+        (is (some? lim) (str "no cited ceiling for " gas))
+        (is (not (atm/entry-permitted? reading))
+            (str gas " at its cited limit " lim " was permitted"))
+        (is (thrown? clojure.lang.ExceptionInfo (atm/assert-entry! reading)))))))
+
+(deftest ungrounded-numbers-are-declared-not-dressed-up
+  (testing "G7's pressure ratings are recorded as unsourced, and match the live map"
+    (let [gap (->> (:kudamori.facts/gaps facts)
+                   (filter #(= :jetting-material-ratings-unsourced (:gap/id %)))
+                   first)]
+      (is (some? gap))
+      (is (= :representative (:gap/sourcing gap)))
+      (is (seq (:gap/closes-when gap)))
+      ;; the declared gap must describe the ratings actually in force — a stale gap
+      ;; entry would understate or overstate what is ungrounded
+      (is (= jet/material-rating-bar (:gap/values gap))))))
+
 ;; ── pipe_nav ──────────────────────────────────────────────────────────────────
 (deftest diameter-fit-check
   (testing "crawler fits a wide pipe, not a narrow one"
