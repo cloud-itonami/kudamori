@@ -15,7 +15,7 @@
 ;; Per ADR-2606142030 (kudamori R0).
 (ns kudamori.methods.datom-emit
   (:require [clojure.edn :as edn]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [kudamori.methods.analyze :as az]))
 
 (defn fmt
