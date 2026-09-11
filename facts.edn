@@ -2,7 +2,7 @@
 ;;
 ;; WHY THIS FILE EXISTS
 ;; -------------------
-;; `kudamori/methods/atmosphere.clj` carried its four refusal thresholds as bare
+;; `kudamori/methods/atmosphere.cljk` carried its four refusal thresholds as bare
 ;; constants under the comment "industrial confined-space norm". A norm is not a
 ;; citation: a reader could not tell which regime the numbers came from, whether
 ;; they were current, or whether an edit had quietly loosened one. This file names
@@ -24,7 +24,7 @@
 ;; or "below", so it refuses at exactly the limit that the authority still permits.
 ;; That direction is deliberate and is fixed by test — see
 ;; `code-thresholds-at-least-as-strict-as-every-cited-authority` in
-;; kudamori/methods/test_kudamori.clj. If someone loosens a constant past a cited
+;; kudamori/methods/test_kudamori.cljk. If someone loosens a constant past a cited
 ;; limit, that test fails and names the instrument the change would breach.
 ;;
 ;; JURISDICTIONAL NOTE (this actor operates in JP; the O2 floor it uses is US)
