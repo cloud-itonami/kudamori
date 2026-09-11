@@ -1,0 +1,20 @@
+{:format :kotoba.cljk-origin/v1
+ :renamed-on "2026-09-11"
+ :decision "adr-2609111500-cljk-rename-all-clojure-source (com-junkawasaki/root 90-docs/adr; owner instruction 2026-09-11)"
+ :rule "value = the extension the file had before the rename. A path ending in .clj.cljk or .cljs.cljk kept it in the name because both platform files existed (or the plain target was taken)."
+ :origins
+ {"kudamori/cells/social_post/state_machine.cljk" ".cljc"
+  "kudamori/methods/analyze.cljk" ".clj"
+  "kudamori/methods/atmosphere.cljk" ".clj"
+  "kudamori/methods/campaign.cljk" ".clj"
+  "kudamori/methods/coverage.cljk" ".clj"
+  "kudamori/methods/datom_emit.cljk" ".clj"
+  "kudamori/methods/handoff.cljk" ".clj"
+  "kudamori/methods/inspection.cljk" ".clj"
+  "kudamori/methods/jetting.cljk" ".clj"
+  "kudamori/methods/pipe_nav.cljk" ".clj"
+  "kudamori/methods/relining.cljk" ".clj"
+  "kudamori/methods/rootcut.cljk" ".clj"
+  "kudamori/methods/social.cljk" ".cljc"
+  "kudamori/methods/test_kudamori.cljk" ".clj"
+  "run_tests.cljk" ".clj"}}

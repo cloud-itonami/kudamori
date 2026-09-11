@@ -8,7 +8,7 @@
 ;;
 ;; Thresholds — SOURCED, not a house norm. Each constant below is quoted, dated and
 ;; URL'd in `facts.edn` (:kudamori.facts/atmosphere), and a drift test in
-;; kudamori/methods/test_kudamori.clj fails if one is loosened past its authority:
+;; kudamori/methods/test_kudamori.cljk fails if one is loosened past its authority:
 ;;   O2   safe 19.5 % .. 23.5 %      OSHA 29 CFR 1910.146(b) definitions
 ;;   H2S  < 10 ppm   (硫化水素)       NIOSH REL ceiling (10-min); 酸欠則 第二条第二号 agrees
 ;;   CH4  < 10 %LEL                  OSHA 29 CFR 1910.146(b) hazardous atmosphere (1)

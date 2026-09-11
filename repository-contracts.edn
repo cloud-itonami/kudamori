@@ -6,6 +6,6 @@
  :actor-owned-contracts ["lex/cleanAttestation.edn"]
  :dependencies []
  :external-wire-formats #{}
- :tests {:command ["bb" "run_tests.clj"]
+ :tests {:command ["bb" "run_tests.cljk"]
          :count 41
          :assertions 158}}
