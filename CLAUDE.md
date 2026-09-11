@@ -67,9 +67,9 @@ com-etzhayyim-kudamori/
 
 ```bash
 # from repo root (classpath = 20-actors, ns = kudamori.methods.*)
-bb run_tests.cljk                                                        # full suite
-bb --classpath . -m kudamori.methods.analyze                            # → report
-bb --classpath . -m kudamori.methods.datom-emit                         # → EAVT Datom log
+kbb run_tests.cljk                                                        # full suite
+kbb --classpath . -m kudamori.methods.analyze                            # → report
+kbb --classpath . -m kudamori.methods.datom-emit                         # → EAVT Datom log
 ```
 
 ## The two starred safety gates (verified in code + tests)
