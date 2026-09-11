@@ -1,5 +1,5 @@
 ;; kudamori 管守 — test suite (clojure.test, babashka-runnable).
-;; Run: bb run_tests.cljk
+;; Run: kbb run_tests.cljk
 ;; Per ADR-2606142030 (kudamori R0).
 (ns kudamori.methods.test-kudamori
   (:require [clojure.test :refer [deftest is testing run-tests]]

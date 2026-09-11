@@ -16,9 +16,9 @@ pure Clojure (no deps) → run under both `bb` and the kotoba pywasm runtime.
 ## Run
 
 ```bash
-bb run_tests.cljk                                                        # 41 tests / 158 assertions
-bb --classpath . -m kudamori.methods.analyze                            # → sewer-cleaning R0 report
-bb --classpath . -m kudamori.methods.datom-emit                         # → kotoba EAVT Datom log
+kbb run_tests.cljk                                                        # 41 tests / 158 assertions
+kbb --classpath . -m kudamori.methods.analyze                            # → sewer-cleaning R0 report
+kbb --classpath . -m kudamori.methods.datom-emit                         # → kotoba EAVT Datom log
 ```
 
 ## What it does
