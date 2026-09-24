@@ -12,7 +12,7 @@
 ;; Pure Clojure, no deps → babashka-runnable AND kotoba-pywasm-portable.
 ;; Per ADR-2606142030 (kudamori R0).
 (ns kudamori.methods.analyze
-  (:require [clojure.edn :as edn]
+  (:require [kotoba.lang.edn :as edn]
             [kudamori.methods.atmosphere :as atm]
             [kudamori.methods.pipe-nav :as nav]
             [kudamori.methods.jetting :as jet]

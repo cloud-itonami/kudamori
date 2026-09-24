@@ -3,7 +3,7 @@
 ;; Per ADR-2606142030 (kudamori R0).
 (ns kudamori.methods.test-kudamori
   (:require [kotoba.test :refer [deftest is testing run-tests]]
-            [clojure.edn :as edn]
+            [kotoba.lang.edn :as edn]
             [kudamori.methods.atmosphere :as atm]
             [kudamori.methods.pipe-nav :as nav]
             [kudamori.methods.jetting :as jet]
