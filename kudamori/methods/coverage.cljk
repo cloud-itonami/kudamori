@@ -13,7 +13,7 @@
 ;; Pure Clojure, no deps → babashka-runnable AND kotoba-pywasm-portable.
 ;; Per ADR-2606142030 (kudamori R0).
 (ns kudamori.methods.coverage
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 (def sub-tasks
   "The sewer / confined-space in-pipe cleaning occupation decomposed into sub-tasks.
