@@ -2,7 +2,7 @@
 ;; Run: kbb run_tests.cljk
 ;; Per ADR-2606142030 (kudamori R0).
 (ns kudamori.methods.test-kudamori
-  (:require [clojure.test :refer [deftest is testing run-tests]]
+  (:require [kotoba.test :refer [deftest is testing run-tests]]
             [clojure.edn :as edn]
             [kudamori.methods.atmosphere :as atm]
             [kudamori.methods.pipe-nav :as nav]

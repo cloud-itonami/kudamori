@@ -8,7 +8,7 @@
 ;;   kbb run_tests.cljk
 (require '[babashka.classpath :as cp]
          '[babashka.fs :as fs]
-         '[clojure.test :as t])
+         '[kotoba.test :as t])
 
 ;; The standalone repository root is the namespace classpath root.
 (cp/add-classpath (str (fs/parent (fs/absolutize *file*))))
