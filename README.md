@@ -61,6 +61,6 @@ over-pressure gate still refuses; the limits it refuses against are unverified.
 R0 design+sim only (G1, no-server-key) · water-reuse/eco + effluent→mizuho (G2) · no worker
 surveillance (G3) · Displacement-Dividend-coupled (G4) · ★ confined-space atmosphere gate
 raises (G5) · Murakumo-only (G6) · ★ no pipe over-pressure, raises (G7) · tazuna-teleoperable
-(G8). See `CLAUDE.md` for the full text.
+(G8). See `AGENTS.md` for the full text.
 
 Apache 2.0 + etzhayyim Charter Compliance Rider v3.1.
