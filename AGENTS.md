@@ -48,7 +48,7 @@ methods are pure Clojure (no deps) → run under both `bb` and the kotoba pywasm
 
 ```
 com-etzhayyim-kudamori/
-├── CLAUDE.md                       # this file
+├── AGENTS.md                       # this file
 ├── manifest.edn                    # actor manifest (5 cells, 8 gates, Clojure methods)
 ├── data/
 │   └── network.edn                 # reference foul-sewer reach seed (:representative)
